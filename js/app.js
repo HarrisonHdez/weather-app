@@ -4,50 +4,59 @@ const formulario = document.querySelector('#formulario');
 
 window.addEventListener('load', () => {
     formulario.addEventListener('submit', buscarClima);
-});
-       
+})
+
+
+
+
 function buscarClima(e) {
     e.preventDefault();
-
-    // console.log('Buscando el Clima...');
-
-    //* Validar
-    const ciudad = document.querySelector('#ciudad').value;
-    const pais = document.querySelector('#pais').value;
+    const ciudad = document.querySelector('#ciudad').value
+    const pais = document.querySelector('#pais').value
 
     // console.log(ciudad);
     // console.log(pais);
 
-    if (ciudad === '' || pais === '') {
-        mostrarError('Ambos campos son obligatorios');
+    if(ciudad === '' || pais === '') {
+        // Hubo un error
+        mostrarError('Ambos campos son obligatorios')
 
-        return
+        return;
     }
-    
+    consultarAPI(ciudad, pais );
 }
 
 function mostrarError(mensaje) {
-    // console.log(mensaje);
+  const alerta = document.querySelector('.bg-red-100');
+  if(!alerta) {
+      const alerta = document.createElement('div');
 
-    const alerta = document.querySelector('.bg-red-100');
-    
-    if(!alerta) {
-            //* Crear una alerta
-        const alerta = document.createElement('div');
+      alerta.classList.add('bg-red-100', "border-red-400", "text-red-700", "px-4", "py-3", "rounded", "relative", "max-w-md", "mx-auto", "mt-6", "text-center" );
 
-        alerta.classList.add('bg-red-100', 'border-red-400', 'text-red-700', 'px-4', 'py-3', 'rounded', 'max-w-md', 'mx-auto', 'mt-6', 'text-center');
+      alerta.innerHTML = `
+          <strong class="font-bold">Error!</strong>
+          <span class="block sm:inline">${mensaje}</span>
+      `;
 
-        alerta.innerHTML = `
-            <strong class="font-bold">Error!</strong>
+      container.appendChild(alerta);
+      setTimeout(() => {
+          alerta.remove();
+      }, 3000);
+  }
+}
 
-            <span class="block">${mensaje}</span>
-        `;
-        container.appendChild(alerta);
+function consultarAPI(ciudad, pais ) {
+        // Consultar la API e imprimir el Resultado...
 
-        //* Eliminar alerta 
+    // leer la url  y agregar el API key
+    const appId = '31b33df22fe2b492d9b74843003438fe';
+    let url = `http://api.openweathermap.org/data/2.5/weather?q=${ciudad},${pais}&appid=${appId}`;
 
-        setTimeout(() => {
-            alerta.remove();
-        }, 2000);
-    }
+
+    // query con fetch api
+    fetch(url)
+      .then( respuesta => respuesta.json())
+      .then( datos => console.log(datos))
+      .catch( error => console.log(error))
+        
 }
